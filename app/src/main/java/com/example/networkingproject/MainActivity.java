@@ -31,10 +31,18 @@ public class MainActivity extends AppCompatActivity {
 
         DatabaseClient.databaseWriteExecutor.execute(()->{
             List<City> dbCities = DatabaseClient.getsDatabase().getDao().getAllCities();
-            adapter = new DatabaseCitiesAdapter(this,dbCities);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-            recyclerView.setAdapter(adapter);
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    adapter = new DatabaseCitiesAdapter(getApplicationContext(),dbCities);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    recyclerView.setAdapter(adapter);
+
+
+                }
+            });
+
         });
 
 

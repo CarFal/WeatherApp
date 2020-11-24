@@ -1,5 +1,6 @@
 package com.example.networkingproject;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -56,6 +57,7 @@ public class DatabaseCitiesAdapter extends RecyclerView.Adapter<DatabaseCitiesAd
             City city = cityList.get(getAdapterPosition());
             Intent intent = new Intent(mCtx,WeatherActivity.class);
             intent.putExtra("city",city.getCityName());
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mCtx.startActivity(intent);
         }
     }
