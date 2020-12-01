@@ -17,14 +17,22 @@ public class DatabaseCitiesAdapter extends RecyclerView.Adapter<DatabaseCitiesAd
 
     private Context mCtx;
     private List<City> cityList;
+    private ClickListener listener;
 
-    public DatabaseCitiesAdapter(Context mCtx, List<City> cityList) {
+    interface ClickListener{
+        void cityDidClicked(City city);
+    }
+
+    public DatabaseCitiesAdapter(Context mCtx,Activity activity, List<City> cityList) {
         this.mCtx = mCtx;
         this.cityList = cityList;
+        this.listener = (ClickListener)activity;
+
     }
 
     @Override
     public FavoriteCitiesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
         View view = LayoutInflater.from(mCtx).inflate(R.layout.recyclerview_cities, parent, false);
         return new FavoriteCitiesViewHolder(view);
     }
@@ -55,10 +63,13 @@ public class DatabaseCitiesAdapter extends RecyclerView.Adapter<DatabaseCitiesAd
         @Override
         public void onClick(View v) {
             City city = cityList.get(getAdapterPosition());
-            Intent intent = new Intent(mCtx,WeatherActivity.class);
-            intent.putExtra("city",city.getCityName());
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mCtx.startActivity(intent);
+            listener.cityDidClicked(city);
+
+
+//            Intent intent = new Intent(mCtx,WeatherActivity.class);
+//            intent.putExtra("city",city.getCityName());
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            mCtx.startActivity(intent);
         }
     }
 

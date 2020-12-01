@@ -22,8 +22,6 @@ public class WeatherActivity extends AppCompatActivity implements NetworkingClas
         cityText = findViewById(R.id.cityName);
         weatherText = findViewById(R.id.weather);
         cityText.setText(cityName);
-
-
     }
 
     @Override

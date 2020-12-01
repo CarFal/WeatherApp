@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,29 +16,32 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DatabaseCitiesAdapter.ClickListener {
     JsonManager jsonManager = new JsonManager();
     FloatingActionButton buttonAddTask;
     NetworkingClass networkingClass;
     DatabaseClient databaseClient;
     RecyclerView recyclerView;
     DatabaseCitiesAdapter adapter;
+    Activity activity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        activity = this;
         setTitle("Weather App");
         databaseClient = DatabaseClient.getInstance(this);
         recyclerView = findViewById(R.id.favoriteCitiesList);
-
         DatabaseClient.databaseWriteExecutor.execute(()->{
             List<City> dbCities = DatabaseClient.getsDatabase().getDao().getAllCities();
 
             this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    adapter = new DatabaseCitiesAdapter(getApplicationContext(),dbCities);
+                    adapter = new DatabaseCitiesAdapter( getApplicationContext(),activity ,dbCities);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
                     recyclerView.setAdapter(adapter);
 
 
@@ -65,17 +70,27 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         DatabaseClient.databaseWriteExecutor.execute(()->{
             List<City> dbCities = DatabaseClient.getInstance(this).getsDatabase().getDao().getAllCities();
+
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
                     //do stuff in main activity
-                    adapter = new DatabaseCitiesAdapter(getApplicationContext(),dbCities);
+                    adapter = new DatabaseCitiesAdapter(getApplicationContext(), activity ,dbCities);
                     recyclerView.setAdapter(adapter);
                     recyclerView.invalidate();
                 }
             });
         });
 
+    }
+
+    @Override
+    public void cityDidClicked(City city) {
+        //
+        Intent intent = new Intent(this,WeatherActivity.class);
+        intent.putExtra("city",city.getCityName());
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
     //
 //    @Override
